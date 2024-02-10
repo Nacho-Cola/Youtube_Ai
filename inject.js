@@ -8,6 +8,7 @@
 // })
 // }, 500)
 
+import {getTranscript} from "./transcript.js"
 
 const observer = new MutationObserver((mutationsList, observer) => {
   for(let mutation of mutationsList) {
@@ -23,6 +24,8 @@ const observer = new MutationObserver((mutationsList, observer) => {
 });
 
 observer.observe(document.body, { childList: true, subtree: true });
+getTranscript();
+
 
 function addElement (container) {
   var hi_button = document.createElement('div');

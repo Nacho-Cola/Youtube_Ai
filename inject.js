@@ -19,7 +19,7 @@ observer.observe(document.body, { childList: true, subtree: true });
 
 
 const langOption = await getLangTranscript();
-const transcript = await getRawTranscript(langOption[0].link)
+const transcript = await getTranscript(langOption[0])
 console.log(transcript)
 
 

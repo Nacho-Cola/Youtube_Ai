@@ -32,8 +32,7 @@ observer.observe(document.body, { childList: true, subtree: true });
 
 
 const langOption = await (0,_transcript_js__WEBPACK_IMPORTED_MODULE_0__.getLangTranscript)();
-console.log(langOption)
-const transcript = await (0,_transcript_js__WEBPACK_IMPORTED_MODULE_0__.getRawTranscript)(langOption[0].link)
+const transcript = await (0,_transcript_js__WEBPACK_IMPORTED_MODULE_0__.getTranscript)(langOption[0])
 console.log(transcript)
 
 

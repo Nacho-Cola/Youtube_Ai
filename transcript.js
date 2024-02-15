@@ -1,3 +1,34 @@
+
+export async function getVideoFormat() {
+  try {
+    const url = window.location.href;
+    const videoPageResponse = await fetch(url);
+    const videoPageHtml = await videoPageResponse.text();
+    const splittedHtml = videoPageHtml.split('"microformat":');
+
+    if (splittedHtml.length < 2) {
+      return; // No Caption Available
+    }
+
+    const videoFormat_json = JSON.parse(splittedHtml[1].split(',"cards"')[0].replace('\n', ''))
+    console.log(videoFormat_json)
+    const titleName = videoFormat_json.playerMicroformatRenderer.title.simpleText;
+    const thumbnail = videoFormat_json.playerMicroformatRenderer.thumbnail.thumbnails[0].url;
+
+    return {
+      title : titleName,
+      thumbnail_url : thumbnail
+    }
+
+
+  } catch (error) {
+    console.error(error);
+    return;
+  }
+}
+
+
+
 export async function getLangTranscript() {
   try {
     const url = window.location.href;
@@ -10,6 +41,7 @@ export async function getLangTranscript() {
     }
 
     const captions_json = JSON.parse(splittedHtml[1].split(',"videoDetails')[0].replace('\n', ''));
+    console.log(videoPageHtml)
     const captionTracks = captions_json.playerCaptionsTracklistRenderer.captionTracks;
     const languageOptions = Array.from(captionTracks).map(i => i.name.simpleText);
 
@@ -25,7 +57,7 @@ export async function getLangTranscript() {
       };
     });
   } catch (error) {
-    console.error("getLangTranscript error");
+    console.error(error);
     return;
   }
 }

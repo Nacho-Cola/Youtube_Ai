@@ -2,53 +2,6 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./inject.js":
-/*!*******************!*\
-  !*** ./inject.js ***!
-  \*******************/
-/***/ ((module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _transcript_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./transcript.js */ "./transcript.js");
-
-
-
-
-const observer = new MutationObserver((mutationsList, observer) => {
-  for(let mutation of mutationsList) {
-    if (mutation.type === 'childList') {
-      let container = document.getElementById("secondary-inner");
-      if (container) {
-        addElement(container);
-        observer.disconnect();
-        return;
-      }
-    }
-  }
-});
-
-observer.observe(document.body, { childList: true, subtree: true });
-
-
-const langOption = await (0,_transcript_js__WEBPACK_IMPORTED_MODULE_0__.getLangTranscript)();
-const transcript = await (0,_transcript_js__WEBPACK_IMPORTED_MODULE_0__.getTranscript)(langOption[0])
-console.log(transcript)
-
-
-function addElement (container) {
-  var hi_button = document.createElement('div');
-  hi_button.style.backgroundColor = 'white';
-  hi_button.style.height = '50px'
-  hi_button.innerHTML = '<b>Youtube AI</b>';
-  container.prepend(hi_button);
-}
-
-__webpack_async_result__();
-} catch(e) { __webpack_async_result__(e); } }, 1);
-
-/***/ }),
-
 /***/ "./transcript.js":
 /*!***********************!*\
   !*** ./transcript.js ***!
@@ -59,8 +12,40 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   getLangTranscript: () => (/* binding */ getLangTranscript),
 /* harmony export */   getRawTranscript: () => (/* binding */ getRawTranscript),
-/* harmony export */   getTranscript: () => (/* binding */ getTranscript)
+/* harmony export */   getTranscript: () => (/* binding */ getTranscript),
+/* harmony export */   getVideoFormat: () => (/* binding */ getVideoFormat)
 /* harmony export */ });
+
+async function getVideoFormat() {
+  try {
+    const url = window.location.href;
+    const videoPageResponse = await fetch(url);
+    const videoPageHtml = await videoPageResponse.text();
+    const splittedHtml = videoPageHtml.split('"microformat":');
+
+    if (splittedHtml.length < 2) {
+      return; // No Caption Available
+    }
+
+    const videoFormat_json = JSON.parse(splittedHtml[1].split(',"cards"')[0].replace('\n', ''))
+    console.log(videoFormat_json)
+    const titleName = videoFormat_json.playerMicroformatRenderer.title.simpleText;
+    const thumbnail = videoFormat_json.playerMicroformatRenderer.thumbnail.thumbnails[0].url;
+
+    return {
+      title : titleName,
+      thumbnail_url : thumbnail
+    }
+
+
+  } catch (error) {
+    console.error(error);
+    return;
+  }
+}
+
+
+
 async function getLangTranscript() {
   try {
     const url = window.location.href;
@@ -73,6 +58,7 @@ async function getLangTranscript() {
     }
 
     const captions_json = JSON.parse(splittedHtml[1].split(',"videoDetails')[0].replace('\n', ''));
+    console.log(videoPageHtml)
     const captionTracks = captions_json.playerCaptionsTracklistRenderer.captionTracks;
     const languageOptions = Array.from(captionTracks).map(i => i.name.simpleText);
 
@@ -88,7 +74,7 @@ async function getLangTranscript() {
       };
     });
   } catch (error) {
-    console.error("getLangTranscript error");
+    console.error(error);
     return;
   }
 }
@@ -153,75 +139,6 @@ async function getRawTranscript(link) {
 /******/ 	}
 /******/ 	
 /************************************************************************/
-/******/ 	/* webpack/runtime/async module */
-/******/ 	(() => {
-/******/ 		var webpackQueues = typeof Symbol === "function" ? Symbol("webpack queues") : "__webpack_queues__";
-/******/ 		var webpackExports = typeof Symbol === "function" ? Symbol("webpack exports") : "__webpack_exports__";
-/******/ 		var webpackError = typeof Symbol === "function" ? Symbol("webpack error") : "__webpack_error__";
-/******/ 		var resolveQueue = (queue) => {
-/******/ 			if(queue && queue.d < 1) {
-/******/ 				queue.d = 1;
-/******/ 				queue.forEach((fn) => (fn.r--));
-/******/ 				queue.forEach((fn) => (fn.r-- ? fn.r++ : fn()));
-/******/ 			}
-/******/ 		}
-/******/ 		var wrapDeps = (deps) => (deps.map((dep) => {
-/******/ 			if(dep !== null && typeof dep === "object") {
-/******/ 				if(dep[webpackQueues]) return dep;
-/******/ 				if(dep.then) {
-/******/ 					var queue = [];
-/******/ 					queue.d = 0;
-/******/ 					dep.then((r) => {
-/******/ 						obj[webpackExports] = r;
-/******/ 						resolveQueue(queue);
-/******/ 					}, (e) => {
-/******/ 						obj[webpackError] = e;
-/******/ 						resolveQueue(queue);
-/******/ 					});
-/******/ 					var obj = {};
-/******/ 					obj[webpackQueues] = (fn) => (fn(queue));
-/******/ 					return obj;
-/******/ 				}
-/******/ 			}
-/******/ 			var ret = {};
-/******/ 			ret[webpackQueues] = x => {};
-/******/ 			ret[webpackExports] = dep;
-/******/ 			return ret;
-/******/ 		}));
-/******/ 		__webpack_require__.a = (module, body, hasAwait) => {
-/******/ 			var queue;
-/******/ 			hasAwait && ((queue = []).d = -1);
-/******/ 			var depQueues = new Set();
-/******/ 			var exports = module.exports;
-/******/ 			var currentDeps;
-/******/ 			var outerResolve;
-/******/ 			var reject;
-/******/ 			var promise = new Promise((resolve, rej) => {
-/******/ 				reject = rej;
-/******/ 				outerResolve = resolve;
-/******/ 			});
-/******/ 			promise[webpackExports] = exports;
-/******/ 			promise[webpackQueues] = (fn) => (queue && fn(queue), depQueues.forEach(fn), promise["catch"](x => {}));
-/******/ 			module.exports = promise;
-/******/ 			body((deps) => {
-/******/ 				currentDeps = wrapDeps(deps);
-/******/ 				var fn;
-/******/ 				var getResult = () => (currentDeps.map((d) => {
-/******/ 					if(d[webpackError]) throw d[webpackError];
-/******/ 					return d[webpackExports];
-/******/ 				}))
-/******/ 				var promise = new Promise((resolve) => {
-/******/ 					fn = () => (resolve(getResult));
-/******/ 					fn.r = 0;
-/******/ 					var fnQueue = (q) => (q !== queue && !depQueues.has(q) && (depQueues.add(q), q && !q.d && (fn.r++, q.push(fn))));
-/******/ 					currentDeps.map((dep) => (dep[webpackQueues](fnQueue)));
-/******/ 				});
-/******/ 				return fn.r ? promise : getResult();
-/******/ 			}, (err) => ((err ? reject(promise[webpackError] = err) : outerResolve(exports)), resolveQueue(queue)));
-/******/ 			queue && queue.d < 0 && (queue.d = 0);
-/******/ 		};
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
 /******/ 		// define getter functions for harmony exports
@@ -251,12 +168,67 @@ async function getRawTranscript(link) {
 /******/ 	})();
 /******/ 	
 /************************************************************************/
-/******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module used 'module' so it can't be inlined
-/******/ 	var __webpack_exports__ = __webpack_require__("./inject.js");
-/******/ 	
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+(() => {
+/*!*******************!*\
+  !*** ./inject.js ***!
+  \*******************/
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _transcript_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./transcript.js */ "./transcript.js");
+
+
+
+
+function addElement (container) {
+  var hi_button = document.createElement('div');
+  hi_button.setAttribute("id", "yt-summery-side-bar");
+  hi_button.style.backgroundColor = 'white';
+  hi_button.style.height = '50px'
+  hi_button.innerHTML = '<b>Youtube AI</b>';
+  container.prepend(hi_button);
+}
+
+async function run_script() {
+
+  const observer = new MutationObserver((mutationsList, observer) => {
+    for(let mutation of mutationsList) {
+      if (mutation.type === 'childList') {
+        let container = document.getElementById("secondary-inner");
+        if (container) {
+          addElement(container);
+          observer.disconnect();
+          break;
+        }
+      }
+    }
+  });
+
+  const sideBar = document.getElementById('yt-summery-side-bar');
+  if(!sideBar){
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
+  
+
+  const langOption = await (0,_transcript_js__WEBPACK_IMPORTED_MODULE_0__.getLangTranscript)();
+  const transcript = await (0,_transcript_js__WEBPACK_IMPORTED_MODULE_0__.getTranscript)(langOption[0]);
+  const videoFormat = await (0,_transcript_js__WEBPACK_IMPORTED_MODULE_0__.getVideoFormat)()
+  console.log(videoFormat);
+  console.log(transcript);
+}
+
+
+let previousUrl = '';
+const observer_url = new MutationObserver(function(mutations) {
+  if (location.href !== previousUrl) {
+      previousUrl = location.href;
+      run_script();
+    }
+});
+const config = {subtree: true, childList: true};
+observer_url.observe(document, config);
+})();
+
 /******/ })()
 ;
 //# sourceMappingURL=bundle.js.map
